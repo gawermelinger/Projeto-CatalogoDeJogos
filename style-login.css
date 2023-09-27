@@ -1,0 +1,70 @@
+@import url("https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,400;0,700;1,300;1,400&family=Dosis:wght@200&family=Noto+Serif+Khitan+Small+Script&family=Open+Sans:ital,wght@0,500;1,300;1,600&family=Roboto:wght@100;400;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+:root {
+  --border-radius: 0.8rem;
+  --font-size: 1.6rem;
+}
+
+body {
+  height: 100%;
+  background-image: linear-gradient(to top left, #18011c 0%, #000000 100%);
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+html {
+  font-size: 62.5%;
+  font-family: "Roboto", sans-serif;
+  box-sizing: border-box;
+}
+.login-page {
+  width: 20%;
+  min-width: 30rem;
+  margin: 10rem auto;
+  display: grid;
+  gap: 2rem;
+}
+.div-input {
+  width: 100%;
+  padding: 0.5rem;
+}
+.login-box {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr 1rem;
+  gap: 2rem;
+  border: 0.2rem solid rgb(19, 4, 4);
+  border-radius: var(--border-radius);
+  background-color: #0e0111;
+  justify-items: center;
+  padding: 5rem 0;
+}
+.login {
+  display: block;
+  font-size: var(--font-size);
+  color: white;
+  padding: 0.8rem;
+}
+p,
+a {
+  font-size: var(--font-size);
+  color: white;
+  text-align: center;
+}
+.input-field {
+  width: 90%;
+  padding: 0.5rem;
+  margin: 0.3rem 1rem;
+  border-radius: var(--border-radius);
+}
+.login-btn {
+  padding: 0.8rem;
+  border-radius: var(--border-radius);
+  border: none;
+  cursor: pointer;
+}

@@ -1,0 +1,76 @@
+@import url("https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,400;0,700;1,300;1,400&family=Dosis:wght@200&family=Noto+Serif+Khitan+Small+Script&family=Open+Sans:ital,wght@0,500;1,300;1,600&family=Roboto:wght@100;400;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+:root {
+}
+body {
+  height: 100%;
+  background-image: linear-gradient(to top left, #18011c 0%, #000000 100%);
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+html {
+  font-size: 62.5%;
+  font-family: "Roboto", sans-serif;
+  box-sizing: border-box;
+  color: aliceblue;
+}
+.container {
+  width: 50%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(7, 1fr);
+  gap: 2rem;
+  margin: 5rem auto;
+  border: 0.2rem solid rgb(53, 53, 53);
+  border-radius: 0.8rem;
+  background-color: #110115;
+  padding: 2rem;
+}
+.label-form {
+  font-size: 1.6rem;
+}
+.input-form {
+  display: block;
+  width: 100%;
+  padding: 0.8rem;
+  outline: none;
+  margin: 1rem 0;
+  border: none;
+  border-radius: 0.8rem;
+  background-color: #2d252f;
+  color: white;
+}
+#select-form {
+  margin: 0 2rem;
+  width: 15rem;
+  padding: 0.5rem;
+  border-radius: 0.8rem;
+  background-color: #2d252f;
+  color: white;
+}
+.container-radio {
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: repeat(5, 1fr);
+  justify-content: space-evenly;
+  justify-items: start;
+}
+.radio {
+  margin: 0 0.5rem;
+  cursor: pointer;
+}
+#button {
+  margin: 0 auto;
+  padding: 0.8rem;
+  background-color: #2d252f;
+  color: white;
+  border: none;
+  border-radius: 0.8rem;
+  cursor: pointer;
+}

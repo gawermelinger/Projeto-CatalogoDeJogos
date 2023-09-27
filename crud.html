@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style-crud.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <section>
+      <form id="form-game" method="post">
+        <fieldset class="container">
+          <div class="div-nome">
+            <label class="label-form" for="game-name">Nome do jogo:</label>
+            <input class="input-form" type="text" id="game-name" name="name" />
+          </div>
+          <div class="div-data">
+            <label class="label-form" for="game-name"
+              >Data de lançamento:</label
+            >
+            <input class="input-form" type="date" id="game-name" name="date" />
+          </div>
+          <div class="div-duracao">
+            <label class="label-form" for="game-time"
+              >Duração média em horas:</label
+            >
+            <input
+              class="input-form"
+              type="number"
+              id="game-time"
+              name="time"
+            />
+          </div>
+          <div class="div-preco">
+            <label class="label-form" for="game-price">Preço:</label>
+            <input
+              class="input-form"
+              type="number"
+              id="game-price"
+              name="price"
+            />
+          </div>
+          <div>
+            <label class="label-form" for="game-img"
+              >Aqui vai vir a foto futuramente:</label
+            >
+            <input type="text" id="game-img" name="photo" />
+          </div>
+          <div class="div-genero">
+            <label class="label-form" for="game-gender">Gênero:</label>
+            <select id="select-form" name="gender" id="game-gender">
+              <option value="">Selecione</option>
+              <option value="acao">Ação</option>
+              <option value="aventura">Aventura</option>
+              <option value="rpg">RPG</option>
+              <option value="estrategia">Estratégia</option>
+              <option value="esporte">Esporte</option>
+              <option value="horror">Horror</option>
+            </select>
+          </div>
+          <div class="container-radio">
+            <div class="div-plataforma">
+              <input
+                class="radio"
+                type="radio"
+                name="platform"
+                value="computer"
+                id="computer"
+              />
+              <label class="label-form" for="computer">PC</label>
+            </div>
+            <div>
+              <input
+                class="radio"
+                type="radio"
+                name="platform"
+                value="playstation"
+                id="playstation"
+              />
+              <label class="label-form" for="playstation">PlayStation</label>
+            </div>
+            <div>
+              <input
+                class="radio"
+                type="radio"
+                name="platform"
+                value="xbox"
+                id="xbox"
+              />
+              <label class="label-form" for="xbox">Xbox</label>
+            </div>
+            <div>
+              <input
+                class="radio"
+                type="radio"
+                name="platform"
+                value="switch"
+                id="switch"
+              />
+              <label class="label-form" for="switch">Switch</label>
+            </div>
+            <div>
+              <input
+                class="radio"
+                type="radio"
+                name="platform"
+                value="smartphone"
+                id="smartphone"
+              />
+              <label class="label-form" for="smartphone">Smartphone</label>
+            </div>
+          </div>
+          <input id="button" type="submit" value="Criar" />
+        </fieldset>
+      </form>
+    </section>
+    <script src="./script-crud.js"></script>
+  </body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style-register.css" />
+    <title>Cadastro</title>
+  </head>
+  <body>
+    <section>
+      <form id="form-btn" method="post">
+        <fieldset>
+          <div class="div-name">
+            <label for="input-name">Nome:</label>
+            <input type="text" id="input-name" name="completeName" />
+          </div>
+          <div class="div-userName">
+            <label for="input-userName">Nome de usuário:</label>
+            <input type="text" id="input-userName" name="userName" />
+          </div>
+          <div class="div-password">
+            <label for="input-password">Senha:</label>
+            <input type="text" id="input-password" name="password" />
+          </div>
+          <div class="div-confirmPassword">
+            <label for="confirm-password">Confirmar senha:</label>
+            <input type="text" id="confirm-password" name="passwordCheck" />
+          </div>
+          <input id="button" type="submit" value="Cadastrar" />
+        </fieldset>
+      </form>
+    </section>
+
+    <script src="./script-register.js"></script>
+  </body>
+</html>
