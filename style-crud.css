@@ -24,9 +24,9 @@ html {
   width: 50%;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: repeat(7, 1fr);
-  gap: 2rem;
-  margin: 5rem auto;
+  grid-template-rows: repeat(6, 1fr);
+  gap: 1rem;
+  margin: 1rem auto;
   border: 0.2rem solid rgb(53, 53, 53);
   border-radius: 0.8rem;
   background-color: #110115;
@@ -73,4 +73,74 @@ html {
   border: none;
   border-radius: 0.8rem;
   cursor: pointer;
+}
+.display-hidden {
+  display: none;
+}
+.btn-container {
+  display: flex;
+  justify-content: center;
+}
+#btn-add {
+  font-size: 1.5rem;
+  width: 20rem;
+  height: 6rem;
+  border-radius: 5rem;
+  margin: 4rem 0;
+  background-color: #2d252f;
+  color: aliceblue;
+  cursor: pointer;
+  border: none;
+}
+.games-list {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  justify-content: space-evenly;
+  align-content: space-evenly;
+  justify-items: center;
+  gap: 2rem;
+}
+.game-card {
+  /*width: 20%;*/
+  display: grid;
+  grid-template-rows: 1fr 3rem;
+}
+.btn-photo {
+  cursor: pointer;
+}
+.img-game {
+  height: 20rem;
+  width: 18rem;
+}
+.span-name {
+  font-size: 1.6rem;
+}
+
+.modal-section {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+.modal-section .content-modal {
+  background-color: #2d252f;
+  margin: 15% auto;
+  padding: 2rem;
+  border-radius: 0.8rem;
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.game-name {
+  font-size: 4rem;
+}
+span {
+  font-size: 1.6rem;
+  margin-top: 2rem;
 }

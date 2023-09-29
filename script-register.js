@@ -1,4 +1,26 @@
-const users = JSON.parse(localStorage.getItem("users")) || [];
+/*const users = JSON.parse(localStorage.getItem("users")) || [];*/
+const url = "https://crudcrud.com/api/5364100214b84a96aba99050d34cb2ff/users";
+async function getUsers() {
+  const response = await fetch(url);
+  const data = await response.json();
+
+  return data;
+}
+getUsers()
+  .then((response) => {
+    console.log(response);
+  })
+  .catch((error) => {
+    console.log("erro:", error);
+  });
+
+async function createUser(user) {
+  await fetch(url, {
+    headers: { "Content-Type": "application/json" },
+    method: "POST",
+    body: JSON.stringify(user),
+  });
+}
 
 const form = document.getElementById("form-btn");
 
@@ -9,9 +31,10 @@ function creatSpan(campo, divCampo) {
   div.appendChild(error);
 }
 
-form.addEventListener("submit", (event) => {
+form.addEventListener("submit", async (event) => {
   event.preventDefault();
-
+  const users = await getUsers();
+  console.log(users);
   const {
     completeName: nome,
     userName: nomeUsuario,
@@ -73,11 +96,22 @@ form.addEventListener("submit", (event) => {
     alert("As senhas devem ser iguais!");
     return;
   }
-  users.push(newUser);
+  /*createUser(newUser)
+    .then(() => {
+      alert("Usuário cadastrado com sucesso!");
 
-  localStorage.setItem("users", JSON.stringify(users));
+      window.location = "./index.html";
+    })
+    .catch((error) => {
+      console.log(error);
+    });*/
+  try {
+    await createUser(newUser);
+  } catch (error) {
+    console.log(error);
+    return;
+  }
 
   alert("Usuário cadastrado com sucesso!");
-
   window.location = "./index.html";
 });
