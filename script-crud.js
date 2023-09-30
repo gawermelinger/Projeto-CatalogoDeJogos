@@ -1,6 +1,7 @@
 const currentUser = JSON.parse(localStorage.getItem("currentUser")).at(-1);
 
-const url = "https://crudcrud.com/api/5364100214b84a96aba99050d34cb2ff/users";
+const url = "https://crudcrud.com/api/4ea249eb867a4b5d96bc60bb7480568f/users";
+
 async function getUsers() {
   const response = await fetch(url);
   const data = await response.json();
@@ -9,7 +10,7 @@ async function getUsers() {
 
 //const users = JSON.parse(localStorage.getItem("users"));
 const formGame = document.getElementById("form-game");
-let idJogos = 0;
+// let idJogos = 0;
 
 const btnAdd = document.getElementById("btn-add");
 const sectionForm = document.getElementById("section-form");
@@ -17,6 +18,7 @@ const sectionForm = document.getElementById("section-form");
 function creatSpan(campo, divCampo) {
   const div = document.querySelector(divCampo);
   const error = document.createElement("span");
+  error.classList.add("span-error");
   error.innerText = `O campo ${campo} é obrigatório!`;
   div.appendChild(error);
 }
@@ -28,9 +30,12 @@ function toggleBtn() {
 const currentDate = new Date().toISOString().split("T", 1);
 
 btnAdd.addEventListener("click", () => {
+  const ulGames = document.querySelector(".games-list");
+  ulGames.innerHTML = "";
   toggleBtn();
 });
-
+// criar a funçãio validarJogo
+// criar uma função de adição que puxa o form, coloca os valores padrão nos campos e coloca um novo botão no lugar do criar
 formGame.addEventListener("submit", async (event) => {
   event.preventDefault();
   const users = await getUsers();
@@ -52,64 +57,92 @@ formGame.addEventListener("submit", async (event) => {
     preco: preco.value,
     genero: genero.value,
     plataforma: plataforma.value, //!!!aqui não pode ter essa virgula
-    id: idJogos++,
   };
+  if (!validateGame(newGame)) {
+    return;
+  }
+  users.forEach((user) => {
+    if (currentUser.nomeUsuario === user.nomeUsuario) {
+      let listaId = user.jogos.map((jogo) =>
+        (jogo.id !== null) & (jogo.id !== undefined) ? jogo.id : 0
+      );
+      let maxId = 0;
+      if (listaId.length > 0) {
+        maxId = Math.max(...listaId) + 1;
+      }
+
+      newGame.id = maxId;
+      user.jogos.push(newGame);
+      updateUser(user);
+      createCard(user);
+      alert("Jogo cadastrado com sucesso!");
+      formGame.reset();
+      toggleBtn();
+      return;
+    }
+  });
+});
+
+function validateGame(newGame) {
   //VALIDAÇÃO DO NOME:
   if (newGame.nome === "") {
     creatSpan("nome do jogo", ".div-nome");
-    return;
+    return false;
   } else if (newGame.nome.length > 200) {
     alert("Nome do jogo não deve exceder 200 caracteres");
-    return;
+    return false;
   }
   //VALIDAÇÃO DA DATA
   if (newGame.data === "") {
     creatSpan("data de lançamento", ".div-data");
-    return;
+    return false;
   } else if (newGame.data > currentDate) {
     alert("A data de lançamento não deve ser além de hoje.");
-    return;
+    return false;
   }
   //VALIDAÇÃO DA DURAÇÃO
   if (newGame.duracao === "") {
     creatSpan("duração", ".div-duracao");
-    return;
+    return false;
   } else if (Number(newGame.duracao) <= 0 || newGame.duracao.length > 6) {
     alert("Duração não pode ser menor que zero e nem maior que 6 dígitos");
-    return;
+    return false;
   }
   //VALIDAÇÃO DO PREÇO
   if (newGame.preco === "") {
     creatSpan("preço", ".div-preco");
-    return;
+    return false;
   } else if (Number(newGame.preco) <= 0 || newGame.preco.length > 6) {
     alert("Preço não pode ser menor que zero e nem maior que 6 dígitos.");
-    return;
+    return false;
   }
   //VALIDAÇÃO DO GENERO
   if (newGame.genero === "") {
     creatSpan("gênero", ".div-genero");
-    return;
+    return false;
   }
   //VALIDAÇÃO DA PLATAFORMA
   if (newGame.plataforma === "") {
     alert("Você precisa marcar uma plataforma");
-    return;
+    return false;
   }
+  return true;
+}
 
-  users.forEach((user) => {
-    if (currentUser.nomeUsuario === user.nomeUsuario) {
-      user.jogos.push(newGame);
-      createCard(user);
-      console.log(newGame.id);
-      //localStorage.setItem("users", JSON.stringify(users));
-
-      alert("Jogo cadastrado com sucesso!");
-      formGame.reset();
-      toggleBtn();
-    }
+async function updateUser(user) {
+  const uuid = `${user._id}`; //!!ver isso aqui (id não pode começar com número ou caracter especial)
+  const userContent = {
+    nome: user.nome,
+    nomeUsuario: user.nomeUsuario,
+    senha: user.senha,
+    jogos: user.jogos,
+  };
+  await fetch(`${url}/${uuid}`, {
+    headers: { "Content-Type": "application/json" },
+    method: "PUT",
+    body: JSON.stringify(userContent),
   });
-});
+}
 
 function createCard(user) {
   const ulGames = document.querySelector(".games-list");
@@ -144,7 +177,12 @@ function createCard(user) {
     divName.appendChild(spanName);
 
     btnPhoto.addEventListener("click", () => {
-      creatModal(game);
+      const modal = document.getElementById(game.id);
+      if (modal === null) {
+        creatModal(game);
+      } else {
+        modal.classList.toggle("display-hidden");
+      }
     });
   });
 }
@@ -168,8 +206,12 @@ function creatModal(game) {
 
   const btnCloseModal = document.createElement("button");
   btnCloseModal.classList.add("close-modal");
-  btnCloseModal.innerText = "x";
   divContent.appendChild(btnCloseModal);
+
+  const imgCloseModal = document.createElement("img");
+  imgCloseModal.classList.add("img-button");
+  imgCloseModal.src = "./assets/botao-fechar.png";
+  btnCloseModal.appendChild(imgCloseModal);
 
   const gameName = document.createElement("h1");
   gameName.classList.add("game-name");
@@ -201,12 +243,67 @@ function creatModal(game) {
   gamePlatform.innerText = `Onde joguei: ${game.plataforma}`;
   divContent.appendChild(gamePlatform);
 
+  const bntDiv = document.createElement("div");
+  bntDiv.classList.add("div-botoes");
+  divContent.appendChild(bntDiv);
+
+  const btnDeleteGame = document.createElement("button");
+  btnDeleteGame.classList.add("btn-modal");
+  bntDiv.appendChild(btnDeleteGame);
+
+  const imgDeleteGame = document.createElement("img");
+  imgDeleteGame.classList.add("img-button");
+  imgDeleteGame.src = "./assets/excluir-game.png";
+  btnDeleteGame.appendChild(imgDeleteGame);
+
+  const btnEditGame = document.createElement("button");
+  btnEditGame.classList.add("btn-modal");
+  bntDiv.appendChild(btnEditGame);
+
+  const imgEditGame = document.createElement("img");
+  imgEditGame.classList.add("img-button");
+  imgEditGame.src = "./assets/editar-game.png";
+  btnEditGame.appendChild(imgEditGame);
+
   btnCloseModal.addEventListener("click", () => {
-    closeModal();
+    closeModal(game);
+  });
+
+  btnDeleteGame.addEventListener("click", () => {
+    if (confirm("Você tem certeza? A exclusão é irreversível 😮")) {
+      closeModal(game);
+      deleteGame(game.id);
+    }
+  });
+
+  btnEditGame.addEventListener("click", () => {
+    console.log("entrou nesta merda");
   });
 }
 
-function closeModal() {
-  const modal = document.querySelector("modal");
+async function deleteGame(gameId) {
+  //!!!não estamos usando o method:delete
+  const users = await getUsers();
+  users.forEach((user) => {
+    if (currentUser.nomeUsuario === user.nomeUsuario) {
+      user.jogos = user.jogos.filter((jogo) => jogo.id !== gameId);
+      updateUser(user);
+      createCard(user);
+    }
+  });
+}
+
+function closeModal(game) {
+  const modal = document.getElementById(game.id);
   modal.classList.add("display-hidden");
 }
+
+async function init() {
+  const users = await getUsers();
+  users.forEach((user) => {
+    if (currentUser.nomeUsuario === user.nomeUsuario) {
+      createCard(user);
+    }
+  });
+}
+init();

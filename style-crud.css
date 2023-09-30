@@ -56,7 +56,6 @@ html {
 }
 .container-radio {
   display: grid;
-  grid-template-rows: 1fr;
   grid-template-columns: repeat(5, 1fr);
   justify-content: space-evenly;
   justify-items: start;
@@ -64,6 +63,11 @@ html {
 .radio {
   margin: 0 0.5rem;
   cursor: pointer;
+}
+.span-error {
+  color: brown;
+  font-size: 1.4rem;
+  margin: 0 0.5rem;
 }
 #button {
   margin: 0 auto;
@@ -143,4 +147,22 @@ html {
 span {
   font-size: 1.6rem;
   margin-top: 2rem;
+}
+.close-modal {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  right: 55rem;
+}
+.img-button {
+  width: 2rem;
+  height: 2rem;
+  background-color: transparent;
+}
+.btn-modal {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin-top: 1rem;
 }
