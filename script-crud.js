@@ -1,18 +1,29 @@
-const currentUser = JSON.parse(localStorage.getItem("currentUser")).at(-1);
-
-const url = "https://crudcrud.com/api/4ea249eb867a4b5d96bc60bb7480568f/users";
-
 async function getUsers() {
   const response = await fetch(url);
   const data = await response.json();
   return data;
 }
 
+async function getCurrentUser() {
+  const users = await getUsers();
+  let currentLocalUser = JSON.parse(localStorage.getItem("currentUser")).at(-1);
+  users.forEach((user) => {
+    if (currentLocalUser.nomeUsuario === user.nomeUsuario) {
+      currentLocalUser = user;
+    }
+  });
+  return currentLocalUser;
+}
+
+const url = "https://crudcrud.com/api/b53d9e046da6426994adb24153e9da51/users";
+
 //const users = JSON.parse(localStorage.getItem("users"));
-const formGame = document.getElementById("form-game");
-// let idJogos = 0;
 
 const btnAdd = document.getElementById("btn-add");
+btnAdd.addEventListener("click", () => {
+  clearGameCards();
+  toggleBtn();
+});
 const sectionForm = document.getElementById("section-form");
 
 function creatSpan(campo, divCampo) {
@@ -28,17 +39,10 @@ function toggleBtn() {
 }
 //validação da data
 const currentDate = new Date().toISOString().split("T", 1);
-
-btnAdd.addEventListener("click", () => {
-  const ulGames = document.querySelector(".games-list");
-  ulGames.innerHTML = "";
-  toggleBtn();
-});
-// criar a funçãio validarJogo
-// criar uma função de adição que puxa o form, coloca os valores padrão nos campos e coloca um novo botão no lugar do criar
+let currentGameId = null;
+const formGame = document.getElementById("form-game");
 formGame.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const users = await getUsers();
   //desestruturação do objeto:
   // name do input : nome que eu quero dar
   const {
@@ -61,26 +65,44 @@ formGame.addEventListener("submit", async (event) => {
   if (!validateGame(newGame)) {
     return;
   }
-  users.forEach((user) => {
-    if (currentUser.nomeUsuario === user.nomeUsuario) {
-      let listaId = user.jogos.map((jogo) =>
-        (jogo.id !== null) & (jogo.id !== undefined) ? jogo.id : 0
-      );
-      let maxId = 0;
-      if (listaId.length > 0) {
-        maxId = Math.max(...listaId) + 1;
-      }
 
-      newGame.id = maxId;
-      user.jogos.push(newGame);
-      updateUser(user);
-      createCard(user);
-      alert("Jogo cadastrado com sucesso!");
-      formGame.reset();
-      toggleBtn();
-      return;
+  const user = await getCurrentUser();
+  if (currentGameId === null) {
+    let listaId = user.jogos.map((jogo) =>
+      (jogo.id !== null) & (jogo.id !== undefined) ? jogo.id : 0
+    );
+    let maxId = 0;
+    if (listaId.length > 0) {
+      maxId = Math.max(...listaId) + 1;
     }
-  });
+
+    newGame.id = maxId;
+    user.jogos.push(newGame);
+    alert("Jogo cadastrado com sucesso!");
+  } else {
+    newGame.id = currentGameId;
+    let updatedGame = user.jogos.find((jogo) => jogo.id === newGame.id);
+    updatedGame.nome = newGame.nome;
+    updatedGame.data = newGame.data;
+    updatedGame.duracao = newGame.duracao;
+    updatedGame.preco = newGame.preco;
+    updatedGame.genero = newGame.genero;
+    updatedGame.plataforma = newGame.plataforma;
+
+    currentGameId = null;
+    const modal = document.getElementById(newGame.id);
+    modal.remove();
+    alert("Jogo Atualizado com sucesso!");
+  }
+
+  updateUser(user);
+  createCard(user);
+
+  formGame.reset();
+  toggleBtn();
+  const buttonCreate = document.getElementById("button");
+  buttonCreate.value = "Criar";
+  return;
 });
 
 function validateGame(newGame) {
@@ -144,9 +166,8 @@ async function updateUser(user) {
   });
 }
 
-function createCard(user) {
-  const ulGames = document.querySelector(".games-list");
-  ulGames.innerHTML = "";
+async function createCard(user) {
+  const ulGames = clearGameCards();
 
   user.jogos.forEach((game) => {
     const liCard = document.createElement("li");
@@ -176,24 +197,25 @@ function createCard(user) {
     spanName.innerText = game.nome;
     divName.appendChild(spanName);
 
-    btnPhoto.addEventListener("click", () => {
+    btnPhoto.addEventListener("click", async () => {
       const modal = document.getElementById(game.id);
       if (modal === null) {
-        creatModal(game);
+        createModal(game);
       } else {
+        //o modal nunca é refeito
         modal.classList.toggle("display-hidden");
       }
     });
   });
 }
 
-function creatModal(game) {
+async function createModal(game) {
   const main = document.querySelector("main");
 
   const modalSection = document.createElement("section");
   modalSection.classList.add("modal-section");
   modalSection.id = game.id;
-  console.log(game.id);
+
   main.appendChild(modalSection);
 
   const divModal = document.createElement("div");
@@ -215,7 +237,7 @@ function creatModal(game) {
 
   const gameName = document.createElement("h1");
   gameName.classList.add("game-name");
-  gameName.innerText = game.nome;
+  gameName.innerText = game.nome; //!!!chamar a função pra colocar a primeira letra maiúscula
   divContent.appendChild(gameName);
 
   const dataLaunch = document.createElement("span");
@@ -277,20 +299,50 @@ function creatModal(game) {
   });
 
   btnEditGame.addEventListener("click", () => {
-    console.log("entrou nesta merda");
+    closeModal(game);
+    toggleBtn();
+    clearGameCards();
+    editGame(game);
   });
+}
+
+async function editGame(updatedGame) {
+  const gameName = document.getElementById("game-name");
+  gameName.value = updatedGame.nome;
+
+  const gameData = document.getElementById("game-date");
+  gameData.value = updatedGame.data;
+
+  const gameDuration = document.getElementById("game-time");
+  gameDuration.value = updatedGame.duracao;
+
+  const gamePrice = document.getElementById("game-price");
+  gamePrice.value = updatedGame.preco;
+
+  const gameGender = document.getElementById("select-form");
+  gameGender.value = updatedGame.genero;
+
+  const gamePlatform = document.getElementById(updatedGame.plataforma);
+  gamePlatform.checked = true;
+
+  currentGameId = updatedGame.id;
+
+  const buttonCreate = document.getElementById("button");
+  buttonCreate.value = "Atualizar";
+}
+function clearGameCards() {
+  const ulGames = document.querySelector(".games-list");
+  ulGames.innerHTML = "";
+  return ulGames;
 }
 
 async function deleteGame(gameId) {
   //!!!não estamos usando o method:delete
-  const users = await getUsers();
-  users.forEach((user) => {
-    if (currentUser.nomeUsuario === user.nomeUsuario) {
-      user.jogos = user.jogos.filter((jogo) => jogo.id !== gameId);
-      updateUser(user);
-      createCard(user);
-    }
-  });
+  const user = getCurrentUser();
+
+  user.jogos = user.jogos.filter((jogo) => jogo.id !== gameId);
+  updateUser(user);
+  createCard(user);
 }
 
 function closeModal(game) {
@@ -299,11 +351,8 @@ function closeModal(game) {
 }
 
 async function init() {
-  const users = await getUsers();
-  users.forEach((user) => {
-    if (currentUser.nomeUsuario === user.nomeUsuario) {
-      createCard(user);
-    }
-  });
+  const user = await getCurrentUser();
+  createCard(user);
 }
+
 init();
