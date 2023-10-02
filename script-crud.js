@@ -15,7 +15,7 @@ async function getCurrentUser() {
   return currentLocalUser;
 }
 
-const url = "https://crudcrud.com/api/b53d9e046da6426994adb24153e9da51/users";
+const url = "https://crudcrud.com/api/320bde1367d644f89658144601f2977b/users";
 
 //const users = JSON.parse(localStorage.getItem("users"));
 
@@ -40,6 +40,24 @@ function toggleBtn() {
 //validação da data
 const currentDate = new Date().toISOString().split("T", 1);
 let currentGameId = null;
+
+const imageInput = document.getElementById("input-img");
+imageInput.addEventListener("change", (event) => {
+  const image = event.target.files[0];
+  console.log(image);
+  console.log(image.name);
+  const reader = new FileReader();
+
+  reader.addEventListener("load", () => {
+    console.log(reader.result);
+    localStorage.setItem(image.name, reader.result);
+  });
+
+  if (image) {
+    reader.readAsDataURL(image);
+  }
+});
+
 const formGame = document.getElementById("form-game");
 formGame.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -51,15 +69,18 @@ formGame.addEventListener("submit", async (event) => {
     time: tempo_duracao,
     price: preco,
     gender: genero,
+    image: imagem,
     platform: plataforma,
   } = event.target;
-
+  console.log(imagem.value);
+  console.log(imagem.value.split("\\").at(-1));
   const newGame = {
     nome: nome_jogo.value,
     data: data_lancamento.value,
     duracao: tempo_duracao.value,
     preco: preco.value,
     genero: genero.value,
+    imagem: imagem.value.split("\\").at(-1),
     plataforma: plataforma.value, //!!!aqui não pode ter essa virgula
   };
   if (!validateGame(newGame)) {
@@ -87,6 +108,7 @@ formGame.addEventListener("submit", async (event) => {
     updatedGame.duracao = newGame.duracao;
     updatedGame.preco = newGame.preco;
     updatedGame.genero = newGame.genero;
+    updatedGame.imagem = newGame.imagem;
     updatedGame.plataforma = newGame.plataforma;
 
     currentGameId = null;
@@ -185,7 +207,7 @@ async function createCard(user) {
 
     const photo = document.createElement("img");
     photo.classList.add("img-game");
-    photo.src = "./assets/dice-1.png";
+    photo.src = localStorage.getItem(game.imagem); //!!!
     btnPhoto.appendChild(photo);
 
     const divName = document.createElement("div");
@@ -338,7 +360,7 @@ function clearGameCards() {
 
 async function deleteGame(gameId) {
   //!!!não estamos usando o method:delete
-  const user = getCurrentUser();
+  const user = await getCurrentUser();
 
   user.jogos = user.jogos.filter((jogo) => jogo.id !== gameId);
   updateUser(user);
@@ -356,3 +378,11 @@ async function init() {
 }
 
 init();
+
+//só vai recarregar a página quando o form não estiver aberto.
+/*setInterval(() => {
+  if (sectionForm.classList.contains("display-hidden")) {
+    init();
+    console.log("dando init");
+  } 
+}, 5000);*/

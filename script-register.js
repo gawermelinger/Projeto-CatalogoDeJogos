@@ -1,5 +1,5 @@
 /*const users = JSON.parse(localStorage.getItem("users")) || [];*/
-const url = "https://crudcrud.com/api/b53d9e046da6426994adb24153e9da51/users";
+const url = "https://crudcrud.com/api/320bde1367d644f89658144601f2977b/users";
 async function getUsers() {
   const response = await fetch(url);
   const data = await response.json();
