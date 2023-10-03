@@ -1,4 +1,4 @@
-const url = "https://crudcrud.com/api/67b934da2057437b9a7635efa8368418/users";
+const url = "https://crudcrud.com/api/7038d89af08c4c29b89b577487245340/users";
 
 async function getUsers() {
   const response = await fetch(url);
@@ -23,7 +23,6 @@ async function deleteUser(uuid) {
     method: "DELETE",
   });
 }
-
 const btnDeleteUser = document.querySelector(".btn-user");
 btnDeleteUser.addEventListener("click", async () => {
   if (confirm("Tem certeza que deseja excluir sua conta? 😥")) {
@@ -39,7 +38,6 @@ btnAdd.addEventListener("click", () => {
   clearGameCards();
   toggleBtn();
 });
-const sectionForm = document.getElementById("section-form");
 
 //Função para criar dinamicamente o span com mensagem de erro caso o input não passe na validação:
 function creatSpan(campo, divCampo) {
@@ -74,7 +72,7 @@ function getImage() {
   imageInput.addEventListener("change", (event) => {
     //acesso a imagem:
     const image = event.target.files[0];
-    //uso o oconstructor FileReader para criar um novo objeto:
+    //uso o constructor FileReader para criar um novo objeto:
     const reader = new FileReader();
 
     //quando a leitura como URL for concluída, o load é disparado, colocando o dado no localStorage:
@@ -92,8 +90,9 @@ function getImage() {
 const formGame = document.getElementById("form-game");
 formGame.addEventListener("submit", async (event) => {
   event.preventDefault();
+  getImage(); //Chamo essa função porque quando a o form for submetido, vai haver o evento de change
+
   //desestruturação do objeto:
-  getImage(); //Chamo essa função pq???
   const {
     name: nome_jogo,
     date: data_lancamento,
@@ -117,9 +116,8 @@ formGame.addEventListener("submit", async (event) => {
   if (!validateGame(newGame)) {
     return;
   }
-
+  //Faço uma flag para validar a imagem:
   let flagImagem = newGame.imagem === "";
-
   const user = await getCurrentUser();
   if (currentGameId === null) {
     //VALIDAÇÃO DE IMAGEM:
@@ -127,17 +125,24 @@ formGame.addEventListener("submit", async (event) => {
       alert("Adicione uma imagem!");
       return false;
     }
+
+    //acessando o array com todos os ids válidos de jogos do usuário
     let listaId = user.jogos.map((jogo) =>
-      (jogo.id !== null) & (jogo.id !== undefined) ? jogo.id : 0
+      jogo.id !== null && jogo.id !== undefined ? jogo.id : 0
     );
+    //inicio uma variável com id = 0 e caso haja jogos cadastrados, o próximo jogo vai pegar o maior id e somar 1
+    //caso não exista jogos cadastrados, i id será 0
     let maxId = 0;
     if (listaId.length > 0) {
       maxId = Math.max(...listaId) + 1;
     }
 
     newGame.id = maxId;
+
+    //após validação de todos os campos e de imagem:
     user.jogos.push(newGame);
     alert("Jogo cadastrado com sucesso!");
+    //caso esteja atualizando um jogo, e não criando:
   } else {
     newGame.id = currentGameId;
     let updatedGame = user.jogos.find((jogo) => jogo.id === newGame.id);
@@ -146,12 +151,14 @@ formGame.addEventListener("submit", async (event) => {
     updatedGame.duracao = newGame.duracao;
     updatedGame.preco = newGame.preco;
     updatedGame.genero = newGame.genero;
+    //se, durante a edição, o usuário adicionar nova imagem, ela será exibida. Se não continua a antiga:
     if (!flagImagem) {
       updatedGame.imagem = newGame.imagem;
     }
     updatedGame.plataforma = newGame.plataforma;
-
+    //retornando o status do currentGameId para null(estado padrão), para possibilitar adição de novo jogo:
     currentGameId = null;
+    //removendo o modal correspondente ao jogo para ser criado novamente com as informações atualizadas:
     const modal = document.getElementById(newGame.id);
     modal.remove();
     alert("Jogo atualizado com sucesso!");
@@ -162,6 +169,7 @@ formGame.addEventListener("submit", async (event) => {
 
   formGame.reset();
   toggleBtn();
+  //mudando o botão do formulário que era 'atualizar' para criar:
   const buttonCreate = document.getElementById("button");
   buttonCreate.value = "Criar";
   return;
@@ -213,7 +221,7 @@ function validateGame(newGame) {
   }
   return true;
 }
-
+//Função para atualizar os jogos do usuário no crud crud:
 async function updateUser(user) {
   const uuid = `${user._id}`;
   const userContent = {
@@ -368,7 +376,8 @@ async function createModal(game) {
     editGame(game);
   });
 }
-
+//Função para adequar o formulário do CREATE, para atualizar o jogo
+//cada campo de input recebe o valor atual, que pode ser editado
 async function editGame(updatedGame) {
   const gameName = document.getElementById("game-name");
   gameName.value = updatedGame.nome;
@@ -387,9 +396,9 @@ async function editGame(updatedGame) {
 
   const gamePlatform = document.getElementById(updatedGame.plataforma);
   gamePlatform.checked = true;
-
+  //configuração do currentGameId para ser igual ao do jogo atualizado:
   currentGameId = updatedGame.id;
-
+  //substituo o value do botão de submissão para 'atualizar' em vez de 'criar' (form creat):
   const buttonCreate = document.getElementById("button");
   buttonCreate.value = "Atualizar";
 }
@@ -423,12 +432,13 @@ async function init() {
   createCard(user);
 }
 
+const sectionForm = document.getElementById("section-form");
+
 init();
 
 //função para recarregar a página de 5 em 5 segundos, somente quando o form não estiver aberto:
-/*setInterval(() => {
+setInterval(() => {
   if (sectionForm.classList.contains("display-hidden")) {
     init();
-    console.log("dando init");
-  } 
-}, 5000);*/
+  }
+}, 5000);
