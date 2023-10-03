@@ -61,6 +61,7 @@ a {
   padding: 0.5rem;
   margin: 0.3rem 1rem;
   border-radius: var(--border-radius);
+  outline: none;
 }
 .login-btn {
   padding: 0.8rem;

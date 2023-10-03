@@ -9,7 +9,13 @@
   <body>
     <main>
       <section class="btn-container">
-        <div>
+        <div class="div-welcome">
+          <p id="welcome"></p>
+          <div class="div-user">
+            <button class="btn-user">Excluir conta</button>
+          </div>
+        </div>
+        <div class="div-add">
           <button id="btn-add">Adicionar Jogo</button>
         </div>
       </section>
@@ -70,12 +76,14 @@
               </select>
             </div>
             <div class="div-imagem">
-              <label class="label-form" for="input-img">Imagem:</label>
+              <label class="label-form btnPerson" for="input-img"
+                >Selecione uma imagem</label
+              >
               <input
                 type="file"
                 id="input-img"
                 name="image"
-                accept="image/png, image/jpeg"
+                accept="image/png, image/jpeg, image/jpg"
               />
             </div>
             <div class="container-radio">
@@ -130,12 +138,7 @@
                 <label class="label-form" for="smartphone">Smartphone</label>
               </div>
             </div>
-            <!--
-            <div>
-              <label class="label-form" for="evaluation">Minha nota:</label>
-              <input type="range" min="1" max="5" value="1" name="evaluation" />
-            </div>
-            -->
+
             <input
               id="button"
               type="submit"
@@ -146,21 +149,10 @@
         </form>
       </section>
       <section>
-        <ul class="games-list">
-          <!--
-        <li class='game-card'>
-          <div class = 'div-photo'>
-            Aqui vem a foto do jogo
-            <button class='btn-photo'><img class='img-game' src="" alt="imagem do jogo" /></button>
-          </div>
-          <div class= 'div-name'> 
-            <span class = 'span-name'> aqui vem o nome do jogo <span>
-
-          </div>
-        </li>
-        --></ul>
+        <ul class="games-list"></ul>
       </section>
     </main>
+
     <script src="./script-crud.js"></script>
   </body>
 </html>

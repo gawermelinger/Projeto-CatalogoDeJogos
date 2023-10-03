@@ -6,6 +6,11 @@
   box-sizing: inherit;
 }
 :root {
+  --border-radius: 0.8rem;
+  --font-size: 1.6rem;
+  --backgroundColorLight: #2d252f;
+  --backgroundColorDark: #110115;
+  --color: white;
 }
 body {
   height: 100%;
@@ -18,7 +23,7 @@ html {
   font-size: 62.5%;
   font-family: "Roboto", sans-serif;
   box-sizing: border-box;
-  color: aliceblue;
+  color: var(--color);
 }
 .container {
   width: 50%;
@@ -28,12 +33,12 @@ html {
   gap: 1rem;
   margin: 1rem auto;
   border: 0.2rem solid rgb(53, 53, 53);
-  border-radius: 0.8rem;
-  background-color: #110115;
+  border-radius: var(--border-radius);
+  background-color: var(--backgroundColorDark);
   padding: 2rem;
 }
 .label-form {
-  font-size: 1.6rem;
+  font-size: var(--font-size);
 }
 .input-form {
   display: block;
@@ -42,23 +47,18 @@ html {
   outline: none;
   margin: 1rem 0;
   border: none;
-  border-radius: 0.8rem;
-  background-color: #2d252f;
-  color: white;
-}
-#input-img {
-  width: 70%;
-  background-color: #2d252f;
-  padding: 0.8rem;
+  border-radius: var(--border-radius);
+  background-color: var(--backgroundColorLight);
+  color: var(--color);
 }
 
 #select-form {
   margin: 0 2rem;
   width: 15rem;
   padding: 0.5rem;
-  border-radius: 0.8rem;
-  background-color: #2d252f;
-  color: white;
+  border-radius: var(--border-radius);
+  background-color: var(--backgroundColorLight);
+  color: var(--color);
 }
 .container-radio {
   display: grid;
@@ -78,27 +78,27 @@ html {
 .button-form {
   margin: 0 auto;
   padding: 0.8rem;
-  background-color: #2d252f;
-  color: white;
+  background-color: var(--backgroundColorLight);
+  color: var(--color);
   border: none;
-  border-radius: 0.8rem;
+  border-radius: var(--border-radius);
   cursor: pointer;
 }
 .display-hidden {
   display: none;
 }
 .btn-container {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-rows: 10rem 5fr;
 }
 #btn-add {
-  font-size: 1.5rem;
+  font-size: var(--font-size);
   width: 20rem;
   height: 6rem;
   border-radius: 5rem;
   margin: 4rem 0;
-  background-color: #2d252f;
-  color: aliceblue;
+  background-color: var(--backgroundColorLight);
+  color: var(--color);
   cursor: pointer;
   border: none;
 }
@@ -107,25 +107,37 @@ html {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: 1fr;
   justify-content: space-evenly;
   align-content: space-evenly;
   justify-items: center;
-  gap: 2rem;
+  row-gap: 8rem;
 }
 .game-card {
-  /*width: 20%;*/
   display: grid;
   grid-template-rows: 1fr 3rem;
+  gap: 1rem;
 }
 .btn-photo {
   cursor: pointer;
+  height: 14rem;
+  width: 12rem;
+  border: none;
 }
 .img-game {
-  height: 20rem;
-  width: 18rem;
+  height: 14rem;
+  width: 12rem;
+  transition: 200ms;
+}
+.img-game:hover {
+  transform: scale(1.1);
+}
+.div-photo {
+  height: 14rem;
+  width: 12rem;
 }
 .span-name {
-  font-size: 1.6rem;
+  font-size: var(--font-size);
 }
 
 .modal-section {
@@ -139,10 +151,10 @@ html {
   background-color: rgba(0, 0, 0, 0.8);
 }
 .modal-section .content-modal {
-  background-color: #2d252f;
+  background-color: var(--backgroundColorLight);
   margin: 15% auto;
   padding: 2rem;
-  border-radius: 0.8rem;
+  border-radius: var(--border-radius);
   width: 30%;
   display: flex;
   flex-direction: column;
@@ -152,7 +164,7 @@ html {
   font-size: 4rem;
 }
 span {
-  font-size: 1.6rem;
+  font-size: var(--font-size);
   margin-top: 2rem;
 }
 .close-modal {
@@ -172,4 +184,50 @@ span {
   border: none;
   cursor: pointer;
   margin-top: 1rem;
+}
+.div-botoes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3rem;
+  margin: 1rem 0;
+}
+.div-welcome {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+}
+#welcome {
+  font-size: 3rem;
+  padding: 3rem;
+}
+.div-user {
+  display: grid;
+  justify-items: end;
+  align-items: center;
+}
+.btn-user {
+  width: 10rem;
+  height: 4rem;
+  border: none;
+  border-radius: var(--border-radius);
+  background-color: var(--backgroundColorLight);
+  cursor: pointer;
+  margin-right: 3rem;
+  color: var(--color);
+}
+.div-add {
+  width: 100%;
+  text-align: center;
+}
+input[type="file"] {
+  display: none;
+}
+
+.btnPerson {
+  padding: 8px;
+  border-radius: var(--border-radius);
+  text-align: center;
+  background-color: var(--backgroundColorLight);
+  cursor: pointer;
 }

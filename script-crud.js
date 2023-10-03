@@ -1,3 +1,5 @@
+const url = "https://crudcrud.com/api/67b934da2057437b9a7635efa8368418/users";
+
 async function getUsers() {
   const response = await fetch(url);
   const data = await response.json();
@@ -15,10 +17,23 @@ async function getCurrentUser() {
   return currentLocalUser;
 }
 
-const url = "https://crudcrud.com/api/320bde1367d644f89658144601f2977b/users";
+//Botão para deletar a conta de usuário:
+async function deleteUser(uuid) {
+  await fetch(`${url}/${uuid}`, {
+    method: "DELETE",
+  });
+}
 
-//const users = JSON.parse(localStorage.getItem("users"));
+const btnDeleteUser = document.querySelector(".btn-user");
+btnDeleteUser.addEventListener("click", async () => {
+  if (confirm("Tem certeza que deseja excluir sua conta? 😥")) {
+    const currentUser = await getCurrentUser();
+    deleteUser(currentUser._id);
+    window.location = "./index.html";
+  }
+});
 
+//Botão para adicionar um novo jogo:
 const btnAdd = document.getElementById("btn-add");
 btnAdd.addEventListener("click", () => {
   clearGameCards();
@@ -26,6 +41,7 @@ btnAdd.addEventListener("click", () => {
 });
 const sectionForm = document.getElementById("section-form");
 
+//Função para criar dinamicamente o span com mensagem de erro caso o input não passe na validação:
 function creatSpan(campo, divCampo) {
   const div = document.querySelector(divCampo);
   const error = document.createElement("span");
@@ -33,36 +49,51 @@ function creatSpan(campo, divCampo) {
   error.innerText = `O campo ${campo} é obrigatório!`;
   div.appendChild(error);
 }
+
+//Função para esconder o botão quando o formulário abrir e vice-versa:
 function toggleBtn() {
   sectionForm.classList.toggle("display-hidden");
   btnAdd.classList.toggle("display-hidden");
 }
-//validação da data
+
+//Definição da data atual para validação da data:
 const currentDate = new Date().toISOString().split("T", 1);
 let currentGameId = null;
 
-const imageInput = document.getElementById("input-img");
-imageInput.addEventListener("change", (event) => {
-  const image = event.target.files[0];
-  console.log(image);
-  console.log(image.name);
-  const reader = new FileReader();
+//Função para formatar a primeira letra do input como maiúscula e demais minúsculas:
+function inputFormated(input) {
+  let maiuscula = input[0].toUpperCase();
+  let minuscula = input.slice(1).toLowerCase();
+  return maiuscula + minuscula;
+}
 
-  reader.addEventListener("load", () => {
-    console.log(reader.result);
-    localStorage.setItem(image.name, reader.result);
+//Função para tratar as imagens vindas do form e armazenar no localStorage:
+function getImage() {
+  const imageInput = document.getElementById("input-img");
+  //Evento de change no input file
+  imageInput.addEventListener("change", (event) => {
+    //acesso a imagem:
+    const image = event.target.files[0];
+    //uso o oconstructor FileReader para criar um novo objeto:
+    const reader = new FileReader();
+
+    //quando a leitura como URL for concluída, o load é disparado, colocando o dado no localStorage:
+    reader.addEventListener("load", () => {
+      localStorage.setItem(image.name, reader.result);
+    });
+
+    if (image) {
+      //quando finaliza a leitura, o result vai possuir uma URL, que traduz os dados do arquivo:
+      reader.readAsDataURL(image);
+    }
   });
-
-  if (image) {
-    reader.readAsDataURL(image);
-  }
-});
+}
 
 const formGame = document.getElementById("form-game");
 formGame.addEventListener("submit", async (event) => {
   event.preventDefault();
   //desestruturação do objeto:
-  // name do input : nome que eu quero dar
+  getImage(); //Chamo essa função pq???
   const {
     name: nome_jogo,
     date: data_lancamento,
@@ -72,23 +103,30 @@ formGame.addEventListener("submit", async (event) => {
     image: imagem,
     platform: plataforma,
   } = event.target;
-  console.log(imagem.value);
-  console.log(imagem.value.split("\\").at(-1));
+
   const newGame = {
     nome: nome_jogo.value,
     data: data_lancamento.value,
     duracao: tempo_duracao.value,
     preco: preco.value,
     genero: genero.value,
-    imagem: imagem.value.split("\\").at(-1),
-    plataforma: plataforma.value, //!!!aqui não pode ter essa virgula
+    imagem: imagem.value.split("\\").at(-1), //removendo o fakepath da imagem
+    plataforma: plataforma.value,
   };
+  //Caso algum campo não passe na validação, retorna false, se for o true, retorna o newGame:
   if (!validateGame(newGame)) {
     return;
   }
 
+  let flagImagem = newGame.imagem === "";
+
   const user = await getCurrentUser();
   if (currentGameId === null) {
+    //VALIDAÇÃO DE IMAGEM:
+    if (flagImagem) {
+      alert("Adicione uma imagem!");
+      return false;
+    }
     let listaId = user.jogos.map((jogo) =>
       (jogo.id !== null) & (jogo.id !== undefined) ? jogo.id : 0
     );
@@ -108,13 +146,15 @@ formGame.addEventListener("submit", async (event) => {
     updatedGame.duracao = newGame.duracao;
     updatedGame.preco = newGame.preco;
     updatedGame.genero = newGame.genero;
-    updatedGame.imagem = newGame.imagem;
+    if (!flagImagem) {
+      updatedGame.imagem = newGame.imagem;
+    }
     updatedGame.plataforma = newGame.plataforma;
 
     currentGameId = null;
     const modal = document.getElementById(newGame.id);
     modal.remove();
-    alert("Jogo Atualizado com sucesso!");
+    alert("Jogo atualizado com sucesso!");
   }
 
   updateUser(user);
@@ -127,6 +167,7 @@ formGame.addEventListener("submit", async (event) => {
   return;
 });
 
+//Função para validar cada campo do formulário:
 function validateGame(newGame) {
   //VALIDAÇÃO DO NOME:
   if (newGame.nome === "") {
@@ -174,7 +215,7 @@ function validateGame(newGame) {
 }
 
 async function updateUser(user) {
-  const uuid = `${user._id}`; //!!ver isso aqui (id não pode começar com número ou caracter especial)
+  const uuid = `${user._id}`;
   const userContent = {
     nome: user.nome,
     nomeUsuario: user.nomeUsuario,
@@ -188,13 +229,13 @@ async function updateUser(user) {
   });
 }
 
+//Função para criar dinamicamente cada card dentro de uma <li>, com uma imagem e o nome do jogo:
 async function createCard(user) {
   const ulGames = clearGameCards();
 
   user.jogos.forEach((game) => {
     const liCard = document.createElement("li");
     liCard.classList.add("game-card");
-    //liCard.id = uuid;
     ulGames.appendChild(liCard);
 
     const divPhoto = document.createElement("div");
@@ -216,28 +257,28 @@ async function createCard(user) {
 
     spanName = document.createElement("span");
     spanName.classList.add("span-name");
-    spanName.innerText = game.nome;
+    spanName.innerText = inputFormated(game.nome);
     divName.appendChild(spanName);
 
     btnPhoto.addEventListener("click", async () => {
       const modal = document.getElementById(game.id);
+      //Para não criar outro modal, caso um já esteja aberto:
       if (modal === null) {
         createModal(game);
       } else {
-        //o modal nunca é refeito
         modal.classList.toggle("display-hidden");
       }
     });
   });
 }
 
+//Função para criar o modal com todas as informações sobre o jogo, fornecidas no form:
 async function createModal(game) {
   const main = document.querySelector("main");
 
   const modalSection = document.createElement("section");
   modalSection.classList.add("modal-section");
   modalSection.id = game.id;
-
   main.appendChild(modalSection);
 
   const divModal = document.createElement("div");
@@ -259,7 +300,7 @@ async function createModal(game) {
 
   const gameName = document.createElement("h1");
   gameName.classList.add("game-name");
-  gameName.innerText = game.nome; //!!!chamar a função pra colocar a primeira letra maiúscula
+  gameName.innerText = inputFormated(game.nome);
   divContent.appendChild(gameName);
 
   const dataLaunch = document.createElement("span");
@@ -352,34 +393,39 @@ async function editGame(updatedGame) {
   const buttonCreate = document.getElementById("button");
   buttonCreate.value = "Atualizar";
 }
+
+//Função para injetar os elemntos dentro da ul:
 function clearGameCards() {
   const ulGames = document.querySelector(".games-list");
   ulGames.innerHTML = "";
   return ulGames;
 }
 
+//função para deletar um jogo e atualizar o array de jogos do usuário e recriar os cards que não foram excluídos:
 async function deleteGame(gameId) {
-  //!!!não estamos usando o method:delete
   const user = await getCurrentUser();
-
   user.jogos = user.jogos.filter((jogo) => jogo.id !== gameId);
   updateUser(user);
   createCard(user);
 }
 
+//função para fechar o modal do jogo com base no seu id:
 function closeModal(game) {
   const modal = document.getElementById(game.id);
   modal.classList.add("display-hidden");
 }
 
+//função para reconhecer o usuário atual e criar os cards de seus jogos cadastrados:
 async function init() {
   const user = await getCurrentUser();
+  const welcome = document.getElementById("welcome");
+  welcome.innerText = `Olá, ${user.nome} :)`;
   createCard(user);
 }
 
 init();
 
-//só vai recarregar a página quando o form não estiver aberto.
+//função para recarregar a página de 5 em 5 segundos, somente quando o form não estiver aberto:
 /*setInterval(() => {
   if (sectionForm.classList.contains("display-hidden")) {
     init();

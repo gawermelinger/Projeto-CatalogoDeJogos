@@ -1,4 +1,4 @@
-const url = "https://crudcrud.com/api/320bde1367d644f89658144601f2977b/users";
+const url = "https://crudcrud.com/api/67b934da2057437b9a7635efa8368418/users";
 async function getUsers() {
   const response = await fetch(url);
   const data = await response.json();
